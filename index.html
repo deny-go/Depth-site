@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Depth Studio — карты глубины в браузере</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23d7f477'/%3E%3Cpath d='M12 42 32 12 52 42 32 53Z' fill='%231a2017'/%3E%3C/svg%3E">  <script type="module" crossorigin src="./assets/index-RYBlsrHs.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-DrWomP6A.css">
+</head>
+<body>
+<header class="top"><a class="brand" href="./"><span class="logo">◈</span> depth<span>studio</span><sup>WEB</sup></a><span class="privacy"><i></i> Всё остаётся на вашем компьютере</span></header>
+<main>
+<div class="intro"><div><div class="eyebrow">ИЗ ПЛОСКОСТИ В ПРОСТРАНСТВО</div><h1>У каждого кадра <br>есть глубина<span>.</span></h1><p>Превратите изображение в карту глубины.<br>Прямо в браузере, без установки и подписки.</p></div><div class="model-card"><span class="tiny">ДВИЖОК</span><strong>Depth Anything V2</strong><span class="model-sub">Small · относительная глубина</span><span class="model-status" id="modelStatus" role="status"><i class="pulse"></i> Модель запустится на вашем устройстве</span><button id="loadModel" class="text-button">Загрузить модель</button><span class="model-sub" id="loadHint">Первый запуск: ~27–100 МБ</span><progress id="modelProgress" max="100" value="0" hidden aria-label="Загрузка модели"></progress><button id="cpuRetry" class="text-button" hidden>Попробовать на процессоре</button></div></div>
+<div class="workspace">
+<section class="viewer-card" aria-label="Просмотр изображения">
+<div class="viewer-toolbar"><span class="section-label"><b>01</b> Рабочее поле</span><div class="tabs" role="group" aria-label="Режим просмотра"><button data-view="original" class="active" aria-pressed="true">Оригинал</button><button data-view="depth" disabled aria-pressed="false">Глубина</button><button data-view="compare" disabled aria-pressed="false">Сравнить</button></div></div>
+<div class="viewer-body" id="dropZone">
+<button class="empty" id="uploadButton"><span class="upload-art" aria-hidden="true"><span>＋</span></span><strong>Добавьте изображение</strong><span>Перетащите файл сюда или <em>выберите на компьютере</em></span><small>JPG, PNG, WebP · до 25 МБ и 16 Мп</small></button>
+<div class="image-wrap" id="imageWrap" hidden><img id="original" alt="Исходное изображение"><img id="depthImage" alt="Карта относительной глубины" hidden><div class="compare-line" id="compareLine" hidden><span>‹ ›</span></div><input id="compareRange" type="range" min="0" max="100" value="50" aria-label="Положение границы сравнения" hidden><span class="image-tag" id="imageTag">ОРИГИНАЛ</span></div>
+<div class="busy-overlay" id="busyOverlay" hidden><div class="spinner"></div><strong id="busyTitle">Определяем глубину</strong><span id="busyDetail">Обработка на вашем устройстве…</span><small id="elapsed">0 сек.</small><button id="cancel" class="text-button">Отменить</button></div>
+</div>
+<div class="viewer-footer"><span id="fileInfo">Ваш следующий кадр начинается здесь</span><button id="replace" class="text-button" hidden>Заменить изображение ↗</button></div>
+</section>
+<aside class="settings">
+<div class="settings-head"><span class="section-label"><b>02</b> Параметры</span><button class="text-button muted" id="reset">Сбросить</button></div>
+<label class="field-label" for="quality">Качество обработки</label><select id="quality"><option value="392">Быстро · меньше деталей</option><option value="518" selected>Баланс · рекомендуется</option><option value="770">Детально · медленнее</option></select><p class="hint">Карта сохраняется в размере исходного изображения.</p>
+<label class="field-label" for="backend">Устройство обработки</label><select id="backend"><option value="auto">Авто · видеокарта, если доступна</option><option value="wasm">Процессор · совместимость</option></select><p class="hint">На процессоре обработка может быть медленнее.</p>
+<button class="generate" id="generate" disabled><span>Создать карту глубины</span><span aria-hidden="true">↗</span></button>
+<div class="separator"></div>
+<div class="controls" id="adjustments"><div class="control"><label for="contrast">Контраст <output id="contrastValue">1.00</output></label><input id="contrast" type="range" min="0.5" max="3" step="0.05" value="1"></div><div class="control"><label for="gamma">Гамма <output id="gammaValue">1.00</output></label><input id="gamma" type="range" min="0.2" max="3" step="0.05" value="1"></div><div class="control"><label for="smooth">Сглаживание <output id="smoothValue">0.0</output></label><input id="smooth" type="range" min="0" max="5" step="0.5" value="0"></div><label class="toggle-row" for="invert"><span>Инвертировать глубину</span><input id="invert" type="checkbox" role="switch"><span class="toggle" aria-hidden="true"></span></label></div>
+<div class="depth-legend"><div class="gradient" id="legend"></div><div><span id="farLabel">Далеко</span><span id="nearLabel">Близко</span></div></div>
+<div class="separator"></div><label class="field-label" for="bits">Формат экспорта</label><select id="bits"><option value="16">PNG · 16 бит — для обработки</option><option value="8">PNG · 8 бит — для просмотра</option></select><button id="download" class="download" disabled>↓ &nbsp; Скачать карту</button><p class="hint export-note">16 бит сохраняет плавные переходы глубины.</p>
+</aside>
+</div>
+<div class="message" id="message" role="status" hidden></div>
+<footer><span><i></i> Фото остаётся в браузере · без облачной обработки</span><span>Светлее — ближе. Глубина оценивается, расстояния в метрах не измеряются.</span></footer>
+</main><input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" hidden>
+<noscript><p class="message">Для работы приложения включите JavaScript в браузере.</p></noscript></body></html>
